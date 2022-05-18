@@ -225,9 +225,19 @@ def visualize_rssi(*data_obj):
 
 def _check_rssi_one(data_obj):
     '''
-    Processes one signle data_obj only.
-    Computes the mean of the pre-T1 RSSI samples and see if it moves with respect to
-    signal strength.  
+    Processes one single data_obj only.
+    Checks the point estimate of each pre-T1 RSSI reading per input power, and checks that it does not
+    move with changing input power.
+
+    delta_n is an indicator of how well the pre-T1 RSSI fits to the regression line.
+
+    delta is the difference between the first and final values of the pre-T1 regression line.  
+    This use used to gauge whether the line is sloped.  This is used instead of m, the slope of the fitted line
+    because this value corresponds to the movement of the first and final pre-T1 RSSI histograms.
+    The pre-T1 RSSI should not move with input power as it measures noise power only.
+
+    pre_post_delta is the difference in RSSI values between the pre- and post-T1 RSSI.  The post-T1 RSSI should always 
+    be higher as the pre-T1 RSSI is noise only while the post-T1 RSSI is noise + packet signal.
     '''
 
     pre_t1_rssi_mean = []
@@ -305,11 +315,11 @@ if __name__ == '__main__':
     #plt.close('all')
     DUT = ber_data_reader('test_data')
     all_data = DUT.read()
-    #check_rssi(*all_data)
-    visualize_ber_curves(*all_data)
+    # check_rssi(*all_data)
+    # visualize_ber_curves(*all_data)
     #visualize_rssi_one(*all_data,  rf_mode = 120, t1_time = 'max', blf_err = 'pos')
     #visualize_rssi_one(*all_data,  rf_mode = 120, t1_time = 'min', blf_err = 'nom')
     #visualize_rssi_one(*all_data,  rf_mode = 224, t1_time = 'max', blf_err = 'nom')
-    # visualize_rssi(*all_data)
-    # check_rssi_brief(*all_data, tolerance=50)
+    #visualize_rssi(*all_data)
+    check_rssi_brief(*all_data, tolerance=50)
   
